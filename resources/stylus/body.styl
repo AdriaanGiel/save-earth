@@ -1,0 +1,38 @@
+body
+  height 100%
+  width 100%
+  margin 0
+  position absolute
+  display flex
+  align-items center
+  justify-content center
+  overflow hidden
+  background-size cover
+
+
+.normal-background
+  background-image url("../img/space.jpg")
+
+.player-background
+  background-image url("../img/space2.jpg")
+
+.moving-background
+  background-size cover
+  background-repeat repeat
+  animation moving-space 10s linear infinite
+
+
+@keyframes moving-space
+  from
+    background-position 0 0
+
+  to
+    background-position 3414px -2134px
+
+
+.flex
+  display flex
+
+.flex-center
+  justify-content center
+  align-items center
