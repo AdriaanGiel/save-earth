@@ -1,4 +1,8 @@
-//@import "~normalize";
+smartPhoneWidth = 741px;
+$smartPhone = "only screen and (max-width: " + smartPhoneWidth + ")"
+$smartPhonePortrait = "only screen and (max-width: " + smartPhoneWidth + ") and (orientation : portrait)"
+$smartPhoneLandscape = "only screen and (max-width: " + smartPhoneWidth + ") and (orientation : landscape)"
+
 @import "~animate.css";
 @import "~skeleton-css/css/skeleton.css";
 
@@ -6,3 +10,4 @@
 @import "earth.styl";
 @import "form.styl";
 @import "meteor.styl";
+@import "feedback.styl";

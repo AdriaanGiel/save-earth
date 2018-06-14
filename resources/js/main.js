@@ -1,11 +1,10 @@
 import './bootstrap';
-import MainPage from './pages/mainPage';
+import router from './router'
 
+Vue.prototype.$socket = io('http://localhost:4000');
 
 const app = new Vue({
     el:"#app",
-    components:{
-        'main-page': MainPage
-    },
+    router: router,
     methods:{}
 });

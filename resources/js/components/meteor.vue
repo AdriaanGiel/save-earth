@@ -1,32 +1,36 @@
 <template>
     <div id="meteor-box" class="flex flex-center">
         <img @click="showFeedback" :src="img_src" alt="Meteor">
+
+        <feedback :style="feedbackPosition" v-if="feedbackVisible"></feedback>
     </div>
 </template>
 
 <script>
+    import feedback from './feedback';
+
     export default {
         name: "meteor",
         data: () => {
             return {
-                img_src: './img/meteor.gif'
+                img_src: './img/meteor.gif',
+                feedbackVisible: false,
+                feedbackPosition: ''
             }
+        },
+        components:{
+            feedback
         },
         methods:{
             showFeedback(e)
             {
-                let feedback = document.createElement('img');
-                let box = document.getElementById('meteor-box');
-                feedback.src = '';
-                feedback.style.width = '50px';
-                feedback.style.height = '50px';
-                feedback.style.position = 'absolute';
-                feedback.classList.add('animated');
-                feedback.classList.add('fadeOut');
+                this.$parent.$emit('hit');
+                this.feedbackVisible = true;
+                this.feedbackPosition = "left:" + e.x + "px; top:"+ e.y + "px;";
 
-                feedback.style.transform = "translate("+e.x+"px, "+ e.y+"px)";
-
-                box.appendChild(feedback);
+                setTimeout(() => {
+                    this.feedbackVisible = false;
+                }, 200)
             }
         }
     }

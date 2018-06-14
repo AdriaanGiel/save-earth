@@ -1,14 +1,18 @@
 let express = require('express');
-let socket = require('socket.io');
+let app = express();
+
+let server = app.listen(4000,() => {
+    console.log('Server is running');
+});
+
+
 let uuid = require('uuid/v4');
+let io = require('socket.io').listen(server);
 
 let currentScore = 0;
 
-let app = express();
-let server = app.listen(4000,() => {
-   console.log('Server is running');
-});
-let io = socket(server);
+
+
 
 app.use(express.static('public'));
 

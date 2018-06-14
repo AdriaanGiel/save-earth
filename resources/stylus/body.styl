@@ -8,13 +8,22 @@ body
   justify-content center
   overflow hidden
   background-size cover
+  @media $smartPhone
+    &.with-overflow
+      overflow visible
+      position relative
 
 
 .normal-background
   background-image url("../img/space.jpg")
 
-.player-background
+.space-background
   background-image url("../img/space2.jpg")
+
+.slow-moving-background
+  background-size cover
+  background-repeat repeat
+  animation slow-moving-space 250s linear infinite
 
 .moving-background
   background-size cover
@@ -25,9 +34,14 @@ body
 @keyframes moving-space
   from
     background-position 0 0
-
   to
     background-position 3414px -2134px
+
+@keyframes slow-moving-space
+  from
+    background-position 0 0
+  to
+    background-position 3414px 0
 
 
 .flex

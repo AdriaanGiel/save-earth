@@ -1,6 +1,6 @@
 <template>
     <div id="earth">
-        im on a desktop
+
     </div>
 </template>
 
