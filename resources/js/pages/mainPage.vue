@@ -29,6 +29,11 @@
             'name-form': form
         },
         created(){
+            let socket = io('http://localhost:4000');
+
+
+
+
             this.checkCookie();
 
             this.$on('name-caught',() => {
@@ -39,6 +44,8 @@
                   this.showForm = false;
               },1500)
             });
+
+
 
         },
         methods: {
