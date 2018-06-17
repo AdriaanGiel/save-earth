@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2 style="color: white; position: absolute">{{ this.title }} <slot name="score"></slot></h2>
+        <h2 style="color: white; position: absolute; padding: 0 1em">{{ this.title }} <slot name="score"></slot></h2>
     </div>
 </template>
 

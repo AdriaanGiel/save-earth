@@ -1,7 +1,7 @@
 <template>
         <div class="container form-row">
             <div class="row">
-                <div class="columns twelve form-box">
+                <div id="adminform" class="columns twelve form-box">
 
                     <h2 style="text-align: center">Wijzig instellingen</h2>
 
@@ -42,7 +42,7 @@
                         </select>
                     </div>
 
-                    <button @click="saveNewCofig()" class="button-primary">Opslaan</button>
+                    <button @click="saveNewCofig()" :disabled="buttonDisable" class="button-primary">Opslaan <i v-if="buttonDisable" class="fa fa-circle-notch fa-spin"></i></button>
                 </div>
             </div>
         </div>
@@ -57,16 +57,30 @@
                 allClickReset:false,
                 playersReset:false,
                 playerClickReset:false,
-                time:5
+                time:5,
+                buttonDisable: false
             }
         },
         created(){
             this.setupBodyOptions();
+            this.$socket.emit('settings_page');
+            this.$socket.on('settings_changed',() => {
+                this.buttonDisable = false;
 
+            });
+
+        },
+        mounted(){
+            let form = document.getElementById('adminform');
+            form.addEventListener('change',(e) => {
+                this.$socket.emit('settings_page');
+            })
         },
         methods:{
             saveNewCofig()
             {
+                this.buttonDisable = 'disabled';
+
                 let config = {
                     globalReset: this.globalReset,
                     allClickReset: this.allClickReset,
@@ -74,6 +88,8 @@
                     playerClickReset: this.allClickReset,
                     time: this.time
                 };
+
+                this.$socket.emit('setting_save',config);
 
             },
             resetEverything()

@@ -2,6 +2,7 @@ body
   height 100%
   width 100%
   margin 0
+
   position absolute
   display flex
   align-items center
@@ -13,6 +14,8 @@ body
       overflow visible
       position relative
 
+body *
+  font-family 'Russo One', cursive
 
 .normal-background
   background-image url("../img/space.jpg")
@@ -30,6 +33,9 @@ body
   background-repeat repeat
   animation moving-space 10s linear infinite
 
+.full-height-and-width
+  height 100%
+  width 100%
 
 @keyframes moving-space
   from

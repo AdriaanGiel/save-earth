@@ -1,7 +1,6 @@
 <template>
     <div id="meteor-box" class="flex flex-center">
         <img @click="showFeedback" :src="img_src" alt="Meteor">
-
         <feedback :style="feedbackPosition" v-if="feedbackVisible"></feedback>
     </div>
 </template>

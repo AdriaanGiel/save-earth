@@ -1,24 +1,42 @@
 <template>
     <div>
+        <div v-if="changingSettings">
+            <div class="container form-row">
+                <div class="row">
+                    <div class="columns twelve form-box">
 
-        <name-form v-if="showForm" :class="formAnimation"></name-form>
+                        <h2 style="text-align: center">Spell wordt klaar gezet</h2>
 
-        <div v-else>
-            <score title="Hits">
-                <span slot="score">{{ this.totalScore }}</span>
-            </score>
-            <meteor ></meteor>
+                        <div style="width: 100%" class="flex flex-center">
+
+                            <i style="font-size:5em" class="fa fa-circle-notch fa-spin"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <div v-else>
+            <name-form v-if="showForm" :class="formAnimation"></name-form>
 
+            <div v-else>
+                <score title="Hits">
+                    <span slot="score">{{ this.totalScore }}</span>
+                </score>
+                <meteor ></meteor>
+            </div>
+
+        </div>
     </div>
+
 </template>
 
 <script>
     import score from '../components/score';
     import meteor from '../components/meteor';
     import form from '../components/nameForm';
-
+    import Progress from '../components/progress';
     export default {
         name: "meteorPage",
         data:() => {
@@ -26,19 +44,24 @@
                 username:false,
                 formAnimation: '',
                 showForm:true,
-                totalScore:0
+                totalScore:0,
+                changingSettings: false
             }
         },
         components: {
             'score': score,
             'meteor': meteor,
-            'name-form': form
+            'name-form': form,
+            'progress': Progress
         },
         created(){
             this.setupBodyOptions();
             this.checkCookie();
-
             this.$on('hit',this.addScore);
+            this.$socket.on('changing_settings', (data) => { this.changingSettings = true });
+
+
+            this.$socket.on('reset_cookies',this.resetCookies);
 
             this.$on('name-caught',() => {
               this.username = true;
@@ -52,7 +75,22 @@
         methods: {
             checkCookie()
             {
-                console.log(document.cookie.includes('username'));
+                console.log(this.getCookieValue('username'));
+                if(this.getCookieValue('username') && this.getCookieValue('username') !== 'empty')
+                {
+                    console.log('asddas');
+                    this.showForm = false;
+                    let cookieScore = this.getCookieValue('score');
+
+                    this.$socket.emit('reconnecting_player',{
+                        id: this.getCookieValue('id')
+                    });
+
+                    if(cookieScore)
+                    {
+                        this.totalScore = cookieScore;
+                    }
+                }
             },
 
             setupBodyOptions()
@@ -64,6 +102,23 @@
             addScore()
             {
                 this.totalScore++;
+                document.cookie = 'score=' + this.totalScore;
+
+                this.$socket.emit('score',{
+                   score: this.totalScore
+                });
+            },
+            getCookieValue(a)
+            {
+                let b = document.cookie.match('(^|;)\\s*' + a + '\\s*=\\s*([^;]+)');
+                return b ? b.pop() : '';
+            },
+            resetCookies()
+            {
+                console.log('asdasd');
+                document.cookie = "username=empty";
+                document.cookie = "id=empty";
+                document.cookie = "score=empty";
             }
         }
     }

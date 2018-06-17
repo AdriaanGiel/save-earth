@@ -31,11 +31,29 @@
             {
                 if(this.userName !== ''){
                     this.checkName = false;
-                    document.cookie = "username=" + this.userName + ";";
+                    this.addNewPlayer();
                     this.$parent.$emit('name-caught');
                 }else{
                     this.checkName = true;
                 }
+            },
+            addNewPlayer()
+            {
+                if(!this.getCookieValue('username') || this.getCookieValue('username') === 'empty'){
+                    let id = Uuid();
+
+                    document.cookie = "username=" + this.userName + ";";
+                    document.cookie = "id="+ id +";";
+                    this.$socket.emit('add_player',{
+                        id: id,
+                        name: this.userName,
+                        score: 0
+                    });
+                }
+            },
+            getCookieValue(a) {
+                let b = document.cookie.match('(^|;)\\s*' + a + '\\s*=\\s*([^;]+)');
+                return b ? b.pop() : '';
             }
         }
     }
