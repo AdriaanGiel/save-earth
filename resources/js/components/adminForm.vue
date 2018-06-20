@@ -5,6 +5,10 @@
 
                     <h2 style="text-align: center">Wijzig instellingen</h2>
 
+                    <slot name="message">
+
+                    </slot>
+
                     <div class="twelve columns">
                         <label for="globalReset">Reset alles</label>
                         <select @change="resetEverything" v-model="globalReset" class="u-full-width" id="globalReset">
@@ -50,7 +54,7 @@
 
 <script>
     export default {
-        name: "adminFrom",
+        name: "adminForm",
         data(){
             return {
                 globalReset:false,
@@ -63,10 +67,13 @@
         },
         created(){
             this.setupBodyOptions();
-            this.$socket.emit('settings_page');
-            this.$socket.on('settings_changed',() => {
+            // this.$socket.emit('settings_page');
+            this.$socket.on('start_game',() => {
                 this.buttonDisable = false;
-
+                this.globalReset =false;
+                this.allClickReset = false;
+                this.playersReset=false;
+                this.allClickReset = false;
             });
 
         },
@@ -88,6 +95,8 @@
                     playerClickReset: this.allClickReset,
                     time: this.time
                 };
+
+
 
                 this.$socket.emit('setting_save',config);
 

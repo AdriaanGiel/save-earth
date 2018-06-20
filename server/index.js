@@ -85,6 +85,8 @@ io.on('connection', function(socket){
    });
 
    socket.on('setting_save',(data) => {
+
+       console.log(data);
        if(data.globalReset)
        {
            reset_everything();
@@ -98,12 +100,11 @@ io.on('connection', function(socket){
            {
                reset_all_players();
            }
-           if(data.time)
-           {
-
-           }
-
        }
+
+       io.sockets.emit('start_game',{
+           time: data.time * 60000
+       });
    });
 
 
@@ -124,7 +125,6 @@ function reset_all_players()
 {
     all_players = [];
     sendTotalPlayers();
-    console.log('sadas');
     io.sockets.emit('reset_cookies');
 }
 

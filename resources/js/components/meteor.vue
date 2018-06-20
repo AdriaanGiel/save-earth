@@ -17,15 +17,20 @@
                 feedbackPosition: ''
             }
         },
-        components:{
+        mounted() {
+            let touch = new Touch.Region(this.$el);
+            touch.bind(document.body, 'swipe', (e) => {
+                console.log('swipe');
+            }, false)
+        },
+        components: {
             feedback
         },
-        methods:{
-            showFeedback(e)
-            {
+        methods: {
+            showFeedback(e) {
                 this.$parent.$emit('hit');
                 this.feedbackVisible = true;
-                this.feedbackPosition = "left:" + e.x + "px; top:"+ e.y + "px;";
+                this.feedbackPosition = "left:" + e.x + "px; bottom:" + e.y + "px;";
 
                 setTimeout(() => {
                     this.feedbackVisible = false;
@@ -36,7 +41,6 @@
 </script>
 
 <style scoped>
-
 
 
 </style>

@@ -5,12 +5,13 @@
                 <div class="row">
                     <div class="columns twelve form-box">
 
-                        <h2 style="text-align: center">Spell wordt klaar gezet</h2>
+                        <h2 style="text-align: center">Transmissie komt binnen</h2>
 
                         <div style="width: 100%" class="flex flex-center">
-
                             <i style="font-size:5em" class="fa fa-circle-notch fa-spin"></i>
                         </div>
+
+                        <h5 style="text-align: center; margin-top: 1em">Helden: {{ this.players }}</h5>
 
                     </div>
                 </div>
@@ -22,7 +23,7 @@
                     <span slot="score">{{ this.totalScore }}</span>
                 </score>
                 <h2 style="color: white; position: absolute; right: 0;padding: 0 1em">Spelers: <span>{{ this.players }}</span></h2>
-                <earth :style="{backgroundSize: globeStyle}"></earth>
+                <earth :class="earthClass" :style="{transition: globeTransition}"></earth>
                 <div id="meteor-object" class="flex-center flex">
                     <img :src="`./img/meteor.gif`" alt="meteor">
                 </div>
@@ -61,11 +62,18 @@
             return {
                 totalScore: 0,
                 players: 0,
-                changingSettings: false,
+                changingSettings: true,
+                earthClass:"",
                 time: 300000,
                 explosionBusy:true,
                 limitReached:false,
                 destroyers:[]
+            }
+        },
+        computed: {
+            globeTransition()
+            {
+                return "background-size "+ this.time +"ms ease-in";
             }
         },
         components:{
@@ -77,23 +85,36 @@
         {
             this.setupBodyOptions();
             this.$socket.on('total_players',(data) => { this.players = data.total });
-            this.$socket.on('changing_settings', (data) => { this.changingSettings = true });
+            this.$socket.on('changing_settings', (data) => {
+                this.changingSettings = true;
+                this.earthClass = '';
+
+            });
             this.$socket.on('total_score', (data) => { this.totalScore = data.total; });
+
+
+            this.$socket.on('start_game',(data) => {
+                this.changingSettings = false;
+                this.time = data.time;
+                this.limitReached = false;
+                this.explosionBusy = true;
+
+                setTimeout(() => {
+                    this.earthClass = "grow";
+                },500);
+
+                setTimeout(() => {
+                    this.limitReached = true;
+                        this.$socket.emit('earth_destroyed');
+                        setTimeout(() => {
+                            this.explosionBusy = false;
+                        },2000)
+                },this.time)
+            });
 
             this.$socket.on('destroyers',(data) => {
                 this.destroyers = data.players;
             });
-
-            setTimeout(() => {
-                this.limitReached = true;
-
-                this.$socket.emit('earth_destroyed');
-
-                setTimeout(() => {
-
-                    this.explosionBusy = false;
-                },3000)
-            }, 5000);
 
         },
         methods:{

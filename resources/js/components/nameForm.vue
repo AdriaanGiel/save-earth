@@ -39,11 +39,15 @@
             },
             addNewPlayer()
             {
-                if(!this.getCookieValue('username') || this.getCookieValue('username') === 'empty'){
+                if(document.cookie !== 'undefined' || !this.getCookieValue('username') || this.getCookieValue('username') === 'empty'){
                     let id = Uuid();
-
+                    let date = new Date();
+                    date.setTime(date.getTime()+(1*60*1000));
                     document.cookie = "username=" + this.userName + ";";
                     document.cookie = "id="+ id +";";
+                    document.cookie = "expires=" + this.cookieDate(date) + ";";
+                    document.cookie = "path=/;";
+
                     this.$socket.emit('add_player',{
                         id: id,
                         name: this.userName,
@@ -54,7 +58,22 @@
             getCookieValue(a) {
                 let b = document.cookie.match('(^|;)\\s*' + a + '\\s*=\\s*([^;]+)');
                 return b ? b.pop() : '';
-            }
+            },
+            cookieDate(d) {
+                function d2(n) { return n < 10 ? '0' + n : n; }
+                let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+                return '' +
+                    days[d.getUTCDay()] + ', ' +
+                    d2(d.getUTCDate()) + '-' +
+                    months[d.getUTCMonth()] + '-' +
+                    d.getUTCFullYear() + ' ' +
+                    d2(d.getUTCHours()) + ':' +
+                    d2(d.getUTCMinutes()) + ':' +
+                    d2(d.getUTCSeconds()) + ' GMT';
+    }
+
         }
     }
 </script>

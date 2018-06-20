@@ -5,7 +5,7 @@
                 <div class="row">
                     <div class="columns twelve form-box">
 
-                        <h2 style="text-align: center">Spell wordt klaar gezet</h2>
+                        <h2 style="text-align: center">Transmissie komt binnen</h2>
 
                         <div style="width: 100%" class="flex flex-center">
 
@@ -24,7 +24,10 @@
                 <score title="Hits">
                     <span slot="score">{{ this.totalScore }}</span>
                 </score>
+                <h2 style="color: white; position: absolute; right: 0;padding: 0 1em">Held: <span>{{ this.hero }}</span></h2>
                 <meteor ></meteor>
+
+
             </div>
 
         </div>
@@ -41,6 +44,7 @@
         name: "meteorPage",
         data:() => {
             return {
+                hero: '',
                 username:false,
                 formAnimation: '',
                 showForm:true,
@@ -60,11 +64,13 @@
             this.$on('hit',this.addScore);
             this.$socket.on('changing_settings', (data) => { this.changingSettings = true });
 
+            this.$socket.on('start_game',() => this.changingSettings = false);
 
             this.$socket.on('reset_cookies',this.resetCookies);
 
             this.$on('name-caught',() => {
               this.username = true;
+              this.hero = this.getCookieValue('username');
               this.formAnimation = 'animated lightSpeedOut';
 
               setTimeout(() => {
@@ -75,10 +81,9 @@
         methods: {
             checkCookie()
             {
-                console.log(this.getCookieValue('username'));
                 if(this.getCookieValue('username') && this.getCookieValue('username') !== 'empty')
                 {
-                    console.log('asddas');
+                    this.hero = this.getCookieValue('username');
                     this.showForm = false;
                     let cookieScore = this.getCookieValue('score');
 
@@ -115,7 +120,8 @@
             },
             resetCookies()
             {
-                console.log('asdasd');
+                this.showForm = true;
+                this.formAnimation = '';
                 document.cookie = "username=empty";
                 document.cookie = "id=empty";
                 document.cookie = "score=empty";
