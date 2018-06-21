@@ -1,37 +1,63 @@
 <template>
     <div>
-        <div v-if="changingSettings">
+        <div v-if="gameFinished">
             <div class="container form-row">
                 <div class="row">
-                    <div class="columns twelve form-box">
+                    <div class="columns twelve box">
 
-                        <h2 style="text-align: center">Transmissie komt binnen</h2>
+                        <h2 style="text-align: center">Loser</h2>
 
-                        <div style="width: 100%" class="flex flex-center">
+                        <p>Jij hebt bijgedragen aan de vernietiging van de aarde.</p>
 
-                            <i style="font-size:5em" class="fa fa-circle-notch fa-spin"></i>
-                        </div>
+                        <img class="box-img" :src="'./img/thumbs_down.png'" alt="Thumbs down">
+
+                        <p>Je bent op de #1 plaats geeindigd</p>
 
                     </div>
                 </div>
             </div>
         </div>
-
         <div v-else>
-            <name-form v-if="showForm" :class="formAnimation"></name-form>
 
-            <div v-else>
-                <score title="Hits">
-                    <span slot="score">{{ this.totalScore }}</span>
-                </score>
-                <h2 style="color: white; position: absolute; right: 0;padding: 0 1em">Held: <span>{{ this.hero }}</span></h2>
-                <meteor ></meteor>
+
+            <div>
+                <name-form v-if="showForm" :class="formAnimation"></name-form>
+
+                <div v-else>
+                    <div v-if="changingSettings">
+                        <div class="container form-row">
+                            <div class="row">
+                                <div class="columns twelve form-box">
+
+                                    <h2 style="text-align: center">Transmissie komt binnen</h2>
+
+                                    <div style="width: 100%" class="flex flex-center">
+
+                                        <i style="font-size:5em" class="fa fa-circle-notch fa-spin"></i>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-else>
+                        <score class="player-hits" title="Hits">
+                            <span slot="score">{{ this.totalScore }}</span>
+                        </score>
+
+                        <h2 class="player-name" style="">Held: <span>{{ this.hero }}</span></h2>
+                        <meteor ></meteor>
+
+
+                    </div>
+                </div>
 
 
             </div>
-
         </div>
     </div>
+
 
 </template>
 
@@ -49,7 +75,8 @@
                 formAnimation: '',
                 showForm:true,
                 totalScore:0,
-                changingSettings: false
+                changingSettings: true,
+                gameFinished:false
             }
         },
         components: {
@@ -62,9 +89,24 @@
             this.setupBodyOptions();
             this.checkCookie();
             this.$on('hit',this.addScore);
-            this.$socket.on('changing_settings', (data) => { this.changingSettings = true });
+            this.$socket.on('changing_settings', (data) => {
+                this.changingSettings = true;
+                this.gameFinished = false;
+            });
 
-            this.$socket.on('start_game',() => this.changingSettings = false);
+            this.$socket.on('reset_score',() => {
+               this.totalScore = 0;
+               document.cookie = "score=0";
+            });
+
+            this.$socket.on('start_game',() => {
+                this.changingSettings = false;
+                this.gameFinished = false;
+            });
+
+            this.$socket.on('destroyers',() => {
+                this.gameFinished = true;
+            });
 
             this.$socket.on('reset_cookies',this.resetCookies);
 
@@ -120,6 +162,7 @@
             },
             resetCookies()
             {
+                this.totalScore = 0;
                 this.showForm = true;
                 this.formAnimation = '';
                 document.cookie = "username=empty";

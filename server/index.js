@@ -22,6 +22,7 @@ io.on('connection', function(socket){
 
     socket.on('earth_destroyed',() => {
         io.sockets.emit('destroyers',{players:all_players});
+
     });
 
     socket.on('settings_page', () => {
@@ -100,6 +101,9 @@ io.on('connection', function(socket){
            {
                reset_all_players();
            }
+           if(data.playerClickReset){
+               resetClicks();
+           }
        }
 
        io.sockets.emit('start_game',{
@@ -144,6 +148,8 @@ function resetClicks()
         player.score = 0;
         return player;
     });
+
+    io.sockets.emit('reset_score');
 
     sendTotalScore();
 }

@@ -74,6 +74,7 @@
                 this.allClickReset = false;
                 this.playersReset=false;
                 this.allClickReset = false;
+                this.playerClickReset = false;
             });
 
         },
@@ -92,7 +93,7 @@
                     globalReset: this.globalReset,
                     allClickReset: this.allClickReset,
                     playersReset: this.playersReset,
-                    playerClickReset: this.allClickReset,
+                    playerClickReset: this.playerClickReset,
                     time: this.time
                 };
 

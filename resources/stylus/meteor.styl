@@ -15,3 +15,34 @@
   img
     transform rotate(145deg)
     width 100vh
+
+.player-name
+  color white
+  position absolute
+  right 0
+  padding 0 1em
+
+.player-hits
+  color white
+  position absolute
+  left 0
+  padding 0 1em
+  min-width 6em
+
+@media $smartPhone
+  .player-name
+    bottom 0
+    width 100%
+    padding 0
+    text-align center
+
+  .player-hits
+    text-align center
+    color white
+    position absolute
+    width 100%
+    top 50px
+    padding 0
+    min-width 6em
+
+

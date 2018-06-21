@@ -41,12 +41,9 @@
             {
                 if(document.cookie !== 'undefined' || !this.getCookieValue('username') || this.getCookieValue('username') === 'empty'){
                     let id = Uuid();
-                    let date = new Date();
-                    date.setTime(date.getTime()+(1*60*1000));
                     document.cookie = "username=" + this.userName + ";";
                     document.cookie = "id="+ id +";";
-                    document.cookie = "expires=" + this.cookieDate(date) + ";";
-                    document.cookie = "path=/;";
+                    document.cookie = "score=0";
 
                     this.$socket.emit('add_player',{
                         id: id,
