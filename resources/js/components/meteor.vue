@@ -1,6 +1,7 @@
 <template>
     <div id="meteor-box" class="flex flex-center">
-        <img @click="showFeedback" :src="img_src" alt="Meteor">
+        <span style="color: white">{{this.swipeTest}}</span>
+        <img id="meteor-img" @click="showFeedback" :src="img_src" alt="Meteor">
         <feedback :style="feedbackPosition" v-if="feedbackVisible"></feedback>
     </div>
 </template>
@@ -14,14 +15,22 @@
             return {
                 img_src: './img/meteor.gif',
                 feedbackVisible: false,
-                feedbackPosition: ''
+                feedbackPosition: '',
+                swipeTest:0
             }
         },
         mounted() {
-            let touch = new Touch.Region(this.$el);
-            touch.bind(document.body, 'swipe', (e) => {
-                console.log('swipe');
-            }, false)
+            let touch = new Touch.Region(document.body);
+            let met = document.getElementById('meteor-img');
+            touch.bind(met, 'tap', (e) => {
+                this.showFeedback(e);
+            });
+
+            touch.bind(met, 'swipe', (e) => {
+
+                this.showFeedback(e)
+                this.swipeTest++;
+            });
         },
         components: {
             feedback
