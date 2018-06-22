@@ -129,10 +129,11 @@
             });
             // this.timeValue = e.detail.timer.getTimeValues().toString();
 
-            this.$socket.on('is_game_halted',(data) => {  
+            this.$socket.on('is_game_halted',(data) => {
                 if(data.halted){
                     this.changingSettings = data.halted;
                     this.timeClass = "";
+                    this.sound.stop();
                 }else{
                     // sound.play();
                     // sound.volume = 1;
@@ -148,6 +149,7 @@
                 this.changingSettings = true;
                 this.earthClass = '';
                 this.timeClass = "";
+                this.sound.stop();
             });
             this.$socket.on('total_score', (data) => { this.totalScore = data.total; });
 
