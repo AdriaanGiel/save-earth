@@ -1,19 +1,19 @@
 <template>
-<div class="container form-row">
-    <div class="row">
-        <div class="columns twelve form-box">
+    <div class="container form-row">
+        <div class="row">
+            <div class="columns twelve form-box">
 
-            <h2 style="text-align: center">Voer je naam in</h2>
+                <h2 style="text-align: center">Voer je naam in</h2>
 
-            <span style="color: indianred" v-if="checkName">Voer een naam in</span>
-            <span style="color: indianred" v-if="checkNameLength">Naam is te lang</span>
+                <span style="color: indianred" v-if="checkName">Voer een naam in</span>
+                <span style="color: indianred" v-if="checkNameLength">Naam is te lang</span>
 
-            <input class="u-full-width" type="text" v-model="userName" placeholder="Naam" id="username">
+                <input class="u-full-width" type="text" v-model="userName" placeholder="Naam" id="username">
 
-            <button @click="handleNameInput()" class="button-primary">Gaan</button>
+                <button @click="handleNameInput()" class="button-primary">Gaan</button>
+            </div>
         </div>
     </div>
-</div>
 
 
 </template>
@@ -25,33 +25,31 @@
             return {
                 userName: '',
                 checkName: false,
-                checkNameLength:false
+                checkNameLength: false
             }
         },
-        methods:{
-            handleNameInput()
-            {
-                if(this.userName !== ''){
+        methods: {
+            handleNameInput() {
+                this.userName = this.stripScripts(this.userName);
+                if (this.userName !== '') {
                     this.checkName = false;
                     this.checkNameLength = false;
                     this.addNewPlayer();
                     this.$parent.$emit('name-caught');
-                }else if(this.username.length >= 15)
-                {
+                } else if (this.userName.length >= 15) {
                     this.checkNameLength = true;
-                } else{
+                } else {
                     this.checkName = true;
                 }
             },
-            addNewPlayer()
-            {
-                if(document.cookie !== 'undefined' || !this.getCookieValue('username') || this.getCookieValue('username') === 'empty'){
+            addNewPlayer() {
+                if (document.cookie !== 'undefined' || !this.getCookieValue('username') || this.getCookieValue('username') === 'empty') {
                     let id = Uuid();
                     document.cookie = "username=" + this.userName + ";";
-                    document.cookie = "id="+ id +";";
+                    document.cookie = "id=" + id + ";";
                     document.cookie = "score=0";
 
-                    this.$socket.emit('add_player',{
+                    this.$socket.emit('add_player', {
                         id: id,
                         name: this.userName,
                         score: 0
@@ -63,7 +61,9 @@
                 return b ? b.pop() : '';
             },
             cookieDate(d) {
-                function d2(n) { return n < 10 ? '0' + n : n; }
+                function d2(n) {
+                    return n < 10 ? '0' + n : n;
+                }
                 let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
                     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -75,7 +75,17 @@
                     d2(d.getUTCHours()) + ':' +
                     d2(d.getUTCMinutes()) + ':' +
                     d2(d.getUTCSeconds()) + ' GMT';
-    }
+            },
+            stripScripts(s) {
+                let div = document.createElement('div');
+                div.innerHTML = s;
+                let scripts = div.getElementsByTagName('script');
+                let i = scripts.length;
+                while (i--) {
+                    scripts[i].parentNode.removeChild(scripts[i]);
+                }
+                return div.innerHTML;
+            }
 
         }
     }

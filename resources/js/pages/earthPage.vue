@@ -125,7 +125,7 @@
             let sound = new Howl({
                 src: './audio/meteor.mp3',
                 loop:true,
-                volume: 0.01
+                volume: 0.6
             });
             sound.play();
 
@@ -134,6 +134,7 @@
             this.$socket.on('is_game_halted',(data) => {
                 if(data.halted){
                     this.changingSettings = data.halted;
+                    this.timeClass = "";
                 }else{
                     sound.play();
                     sound.volume = 1;
@@ -148,7 +149,7 @@
             this.$socket.on('changing_settings', (data) => {
                 this.changingSettings = true;
                 this.earthClass = '';
-
+                this.timeClass = "";
             });
             this.$socket.on('total_score', (data) => { this.totalScore = data.total; });
 
@@ -179,7 +180,7 @@
                         let explosion = new Howl({
                            src: './audio/explosion.mp3',
                            loop: false,
-                           volume: 0.5
+                           volume: 0.6
                         });
 
                         explosion.play();
@@ -224,6 +225,8 @@
                     this.$socket.emit('timer_change',{
                         timer:this.timeValue
                     })
+                }else{
+                    this.timeClass = "";
                 }
 
             }
