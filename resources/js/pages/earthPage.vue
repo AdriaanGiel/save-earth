@@ -105,7 +105,8 @@
                 timer: new Timer(),
                 timeValue:{},
                 timeClass: "",
-                backgroundSizeGlobe:""
+                backgroundSizeGlobe:"",
+                sound:{}
             }
         },
         computed: {
@@ -121,14 +122,11 @@
         },
         created()
         {
-
-            let sound = new Howl({
+            this.sound = new Howl({
                 src: './audio/meteor.mp3',
                 loop:true,
-                volume: 0.6
+                volume: 0.4
             });
-            sound.play();
-
             // this.timeValue = e.detail.timer.getTimeValues().toString();
 
             this.$socket.on('is_game_halted',(data) => {
@@ -155,6 +153,8 @@
 
             let growTimer;
             this.$socket.on('start_game',(data) => {
+
+                this.sound.play();
                 this.changingSettings = false;
                 this.time = data.time;
                 this.limitReached = false;
@@ -175,7 +175,7 @@
 
                 growTimer = setTimeout(() => {
                     this.limitReached = true;
-                        sound.stop();
+                        this.sound.stop();
 
                         let explosion = new Howl({
                            src: './audio/explosion.mp3',
