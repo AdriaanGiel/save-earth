@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <h2 class="player-hits">{{ this.title }} <slot name="score"></slot></h2>
+    <div class="flex-fill text-center">
+        <h2 class="player-feedback">{{ this.title }} <slot name="score"></slot></h2>
     </div>
 </template>
 

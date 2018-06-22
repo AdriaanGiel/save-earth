@@ -6,6 +6,7 @@
             <h2 style="text-align: center">Voer je naam in</h2>
 
             <span style="color: indianred" v-if="checkName">Voer een naam in</span>
+            <span style="color: indianred" v-if="checkNameLength">Naam is te lang</span>
 
             <input class="u-full-width" type="text" v-model="userName" placeholder="Naam" id="username">
 
@@ -23,7 +24,8 @@
         data: () => {
             return {
                 userName: '',
-                checkName: false
+                checkName: false,
+                checkNameLength:false
             }
         },
         methods:{
@@ -31,9 +33,13 @@
             {
                 if(this.userName !== ''){
                     this.checkName = false;
+                    this.checkNameLength = false;
                     this.addNewPlayer();
                     this.$parent.$emit('name-caught');
-                }else{
+                }else if(this.username.length >= 15)
+                {
+                    this.checkNameLength = true;
+                } else{
                     this.checkName = true;
                 }
             },

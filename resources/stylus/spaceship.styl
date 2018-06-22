@@ -1,0 +1,142 @@
+randomSec(min,max)
+  return unit(floor(math(0, 'random')*(max - min + 1) + min),'s')
+
+.spaceship
+  position absolute
+  background-size contain
+  background-position center
+  background-repeat no-repeat
+  left -1000px !important
+  &.tesla
+    height 50px
+    width 100px
+    background-image url("../img/tesla.png")
+
+  &.saiyan
+    height 50px
+    width 50px
+    background-image url("../img/saiyan.png")
+
+  &.rick
+    height 50px
+    width 50px
+    background-image url("../img/rick.png")
+
+  &.frieza
+    height 50px
+    width 50px
+    background-image url("../img/frieza.png")
+
+  &.alien
+    height 100px
+    width 100px
+    background-image url("../img/space-ship.png")
+
+  &.earth
+    height 300px
+    width 300px
+    background-image url("../img/earth.png")
+
+.moveLeft
+  animation moveLeft randomSec(1,5) linear
+
+.moveRight
+  animation moveRight randomSec(1,5) linear
+
+.moveLeftAndUp
+  animation moveLeftAndUp randomSec(1,5) linear
+
+.moveLeftAndDown
+  animation moveLeftAndDown randomSec(1,5) linear
+
+.earthImpact
+  animation earthMoveLeftAndUp 3s linear
+
+
+@keyframes moveLeft
+  0%
+    left 0
+  20%
+    left 20vw
+  40%
+    left 40vw
+  60%
+    left 60vw
+  80%
+    left 80vw
+  100%
+    left 120vw
+
+
+@keyframes moveRight
+  0%
+    left 100vw
+  20%
+    left 80vw
+  40%
+    left 60vw
+  60%
+    left 40vw
+  80%
+    left 20vw
+  100%
+    left -10vw
+
+
+@keyframes earthMoveLeftAndUp
+  0%
+    left -80vw
+    top 120vh
+  25%
+    left -60vw
+    top 100vh
+  50%
+    left -40vw
+    top 80vh
+  75%
+    left -20vw
+    top 60vh
+  100%
+    left 0
+    top 40vh
+
+
+@keyframes moveLeftAndUp
+  0%
+    left 120vw
+    top 120vh
+  20%
+    left 80vw
+    top 80vh
+  40%
+    left 60vw
+    top 60vh
+  60%
+    left 40vw
+    top 40vh
+  80%
+    left 20vw
+    top 20vh
+  100%
+    left -10vw
+    top -10vh
+
+@keyframes moveLeftAndDown
+  0%
+    left 0
+    top 0
+  20%
+    left 20vw
+    top 20vh
+  40%
+    left 40vw
+    top 40vh
+  60%
+    left 60vw
+    top 60vh
+  80%
+    left 80vw
+    top 80vh
+  100%
+    left 120vw
+    top 120vh

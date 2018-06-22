@@ -11,7 +11,7 @@
 
                         <img class="box-img" :src="'./img/thumbs_down.png'" alt="Thumbs down">
 
-                        <p>Je bent op de #1 plaats geeindigd</p>
+                        <p>Je bent op de #{{ this.placing }} plaats geeindigd met een score van {{ this.totalScore }}</p>
 
                     </div>
                 </div>
@@ -49,6 +49,7 @@
                         <h2 class="player-name" style="">Held: <span>{{ this.hero }}</span></h2>
                         <meteor ></meteor>
 
+                        <spaceship :class="spaceClass"></spaceship>
 
                     </div>
                 </div>
@@ -65,7 +66,8 @@
     import score from '../components/score';
     import meteor from '../components/meteor';
     import form from '../components/nameForm';
-    import Progress from '../components/progress';
+    import Spaceship from '../components/spaceship';
+
     export default {
         name: "meteorPage",
         data:() => {
@@ -75,23 +77,39 @@
                 formAnimation: '',
                 showForm:true,
                 totalScore:0,
-                changingSettings: true,
-                gameFinished:false
+                changingSettings: false,
+                gameFinished:false,
+                spaceClass:"",
+                placing:0
             }
         },
         components: {
             'score': score,
             'meteor': meteor,
             'name-form': form,
-            'progress': Progress
+            'spaceship': Spaceship,
         },
         created(){
             this.setupBodyOptions();
             this.checkCookie();
             this.$on('hit',this.addScore);
+            this.$on('swipe',this.addSwipeScore);
             this.$socket.on('changing_settings', (data) => {
                 this.changingSettings = true;
                 this.gameFinished = false;
+                this.spaceClass = "";
+            });
+
+
+            this.$socket.on('countdown',this.changeSpaceships);
+
+
+            this.$socket.on('is_game_halted',(data) => {
+                if(data.halted){
+                    this.changingSettings = true;
+                    this.gameFinished = false;
+                    this.spaceClass = "";
+                }
             });
 
             this.$socket.on('reset_score',() => {
@@ -102,10 +120,15 @@
             this.$socket.on('start_game',() => {
                 this.changingSettings = false;
                 this.gameFinished = false;
+                this.spaceClass = "";
             });
 
-            this.$socket.on('destroyers',() => {
+            this.$socket.on('destroyers',(data) => {
                 this.gameFinished = true;
+                this.spaceClass = "";
+                this.placing = data.players.findIndex((player) => {
+                    return player.id === this.getCookieValue('id');
+                }) + 1;
             });
 
             this.$socket.on('reset_cookies',this.resetCookies);
@@ -135,7 +158,7 @@
 
                     if(cookieScore)
                     {
-                        this.totalScore = cookieScore;
+                        this.totalScore = Number(cookieScore);
                     }
                 }
             },
@@ -148,11 +171,22 @@
             },
             addScore()
             {
-                this.totalScore++;
+                this.totalScore += 10;
                 document.cookie = 'score=' + this.totalScore;
 
                 this.$socket.emit('score',{
-                   score: this.totalScore
+                    score: this.totalScore,
+                    addScore: 10
+                });
+            },
+            addSwipeScore()
+            {
+                this.totalScore += 100;
+                document.cookie = 'score=' + this.totalScore;
+
+                this.$socket.emit('score',{
+                    score: this.totalScore,
+                    addScore: 100
                 });
             },
             getCookieValue(a)
@@ -168,6 +202,42 @@
                 document.cookie = "username=empty";
                 document.cookie = "id=empty";
                 document.cookie = "score=empty";
+            },
+            changeSpaceships(data)
+            {
+                let array = [
+                  'moveLeft', 'moveRight', 'moveLeftAndUp', 'moveLeftAndDown'
+                ];
+                let random = Math.floor(Math.random() * array.length);
+                switch (data.countdown){
+                    case "00:04:00":
+                        console.log('alien');
+                        this.spaceClass = "spaceship alien " + array[random];
+                        break;
+                    case "00:03:20":
+                        this.spaceClass = "spaceship saiyan " + array[random];
+                        break;
+
+                    case "00:03:00":
+                        this.spaceClass = "spaceship frieza " + array[random];
+                        break;
+
+                    case "00:02:20":
+                        this.spaceClass = "spaceship animated bounce rick " + array[random];
+                        break;
+
+                    case "00:01:30":
+                        this.spaceClass = "spaceship saiyan " + array[random];
+                        break;
+
+                    case "00:00:30":
+                        this.spaceClass = "spaceship alien " + array[random];
+                        break;
+
+                    case "00:00:03":
+                        this.spaceClass = "spaceship earth earthImpact";
+                        break;
+                }
             }
         }
     }

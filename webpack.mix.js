@@ -15,9 +15,7 @@ let mix = require('laravel-mix');
 
 mix.js('resources/js/main.js', 'public/js')
     .stylus('resources/stylus/app.styl', 'public/css')
-    // .styles([
-    //     ''
-    // ])
+    .combine(['node_modules/howler/dist/howler.js'],'public/js/vendor.js')
     .version()
     .setPublicPath('public')
     .options({

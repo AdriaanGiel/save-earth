@@ -6,8 +6,15 @@
 
 <script>
     export default {
-        name: "earth"
+        name: "earth",
+        mounted()
+        {
+            this.$el.addEventListener('webkitAnimationEnd',() => {
+                console.log('ended animation')
+            })
+        }
     }
+
 </script>
 
 <style lang="stylus" scoped>

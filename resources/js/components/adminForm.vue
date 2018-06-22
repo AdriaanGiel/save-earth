@@ -19,7 +19,7 @@
 
                     <div class="twelve columns">
                         <label for="setTime">Voer tijd in: {{ this.time }} minuten</label>
-                        <input v-model="time" id="setTime" type="range" min="1" max="5" step="0.5">
+                        <input @change="timeChange()" v-model="time" id="setTime" type="range" min="1" max="5" step="0.1">
                     </div>
 
                     <div class="twelve columns">
@@ -46,7 +46,7 @@
                         </select>
                     </div>
 
-                    <button @click="saveNewCofig()" :disabled="buttonDisable" class="button-primary">Opslaan <i v-if="buttonDisable" class="fa fa-circle-notch fa-spin"></i></button>
+                    <button @click="saveNewCofig()" :disabled="buttonDisable" class="button-primary">Spel starten <i v-if="buttonDisable" class="fa fa-circle-notch fa-spin"></i></button>
                 </div>
             </div>
         </div>
@@ -97,8 +97,6 @@
                     time: this.time
                 };
 
-
-
                 this.$socket.emit('setting_save',config);
 
             },
@@ -117,6 +115,12 @@
                 document.body.className = "";
                 document.body.classList.add("normal-background");
                 document.body.classList.add('with-overflow');
+            },
+            timeChange()
+            {
+                this.$parent.$emit('time-changed',{
+                    time: this.time
+                })
             }
 
         }

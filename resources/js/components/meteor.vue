@@ -1,8 +1,9 @@
 <template>
     <div id="meteor-box" class="flex flex-center">
         <span style="color: white">{{this.swipeTest}}</span>
-        <img id="meteor-img" @click="showFeedback" :src="img_src" alt="Meteor">
-        <feedback :style="feedbackPosition" v-if="feedbackVisible"></feedback>
+        <img id="meteor-img" :src="img_src" alt="Meteor">
+        <feedback :type="true" :style="feedbackPosition" v-if="feedbackVisible"></feedback>
+        <feedback :type="false" :style="swipeFeedbackPosition" v-if="swipeFeedbackVisible"></feedback>
     </div>
 </template>
 
@@ -16,6 +17,8 @@
                 img_src: './img/meteor.gif',
                 feedbackVisible: false,
                 feedbackPosition: '',
+                swipeFeedbackVisible: false,
+                swipeFeedbackPosition: '',
                 swipeTest:0
             }
         },
@@ -27,8 +30,7 @@
             });
 
             touch.bind(met, 'swipe', (e) => {
-
-                this.showFeedback(e)
+                this.showSwipeFeedack(e);
                 this.swipeTest++;
             });
         },
@@ -44,6 +46,20 @@
                 setTimeout(() => {
                     this.feedbackVisible = false;
                 }, 200)
+            },
+            showSwipeFeedack(e)
+            {
+                this.$parent.$emit('swipe');
+                this.swipeFeedbackVisible = true;
+                this.swipeFeedbackPosition = "left:" + e.x + this.random(-10,10) + "px; bottom:" + e.y + this.random(-10,10) + "px;";
+
+                setTimeout(() => {
+                    this.swipeFeedbackVisible = false;
+                }, 200)
+            },
+            random(min,max)
+            {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
             }
         }
     }

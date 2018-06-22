@@ -5,6 +5,8 @@ let history = require('connect-history-api-fallback');
 
 let currentScore = 0;
 let all_players = [];
+let game_halted = true;
+
 
 let server = app.listen(config.port,() => {
     console.log('Server is running');
@@ -17,18 +19,35 @@ app.use(express.static('../public'));
 
 
 io.on('connection', function(socket){
+
+    if(!all_players.length){
+        reset_everything();
+    }
+
     sendTotalScore();
     sendTotalPlayers();
+    sendGameState();
+
 
     socket.on('earth_destroyed',() => {
-        io.sockets.emit('destroyers',{players:all_players});
+        all_players = all_players.sort((a,b) => {
+           return b.score - a.score;
+        });
 
+        io.sockets.emit('destroyers',{players:all_players});
+        game_halted = true;
     });
 
     socket.on('settings_page', () => {
        io.sockets.emit('changing_settings');
+       game_halted = true;
     });
 
+    socket.on('timer_change',(data) => {
+       io.sockets.emit('countdown',{
+           countdown: data.timer
+       });
+    });
 
     socket.on('disconnect', function () {
         all_players = all_players.map((player) => {
@@ -81,7 +100,7 @@ io.on('connection', function(socket){
             }
            return player;
        });
-       currentScore++;
+       currentScore += data.addScore;
        sendTotalScore();
    });
 
@@ -109,6 +128,13 @@ io.on('connection', function(socket){
        io.sockets.emit('start_game',{
            time: data.time * 60000
        });
+       if(!data.globalReset)
+       {
+           game_halted = false;
+       }
+       sendGameState();
+       sendTotalScore();
+       sendTotalPlayers();
    });
 
 
@@ -128,7 +154,6 @@ io.on('connection', function(socket){
 function reset_all_players()
 {
     all_players = [];
-    sendTotalPlayers();
     io.sockets.emit('reset_cookies');
 }
 
@@ -137,8 +162,8 @@ function reset_everything()
     currentScore = 0;
     all_players = [];
     reset_all_players();
-    sendTotalScore();
-    sendTotalPlayers();
+    game_halted = true;
+
 }
 
 function resetClicks()
@@ -161,13 +186,22 @@ function sendTotalScore()
     });
 }
 
+function sendGameState()
+{
+    io.sockets.emit('is_game_halted',{
+        halted: game_halted
+    })
+}
 
 function sendTotalPlayers()
 {
+    let players = all_players.filter((p) => {
+        return p.socketId !== '';
+    });
+
+
     io.sockets.emit('total_players',{
-        total: all_players.filter((p) => {
-            return p.socketId !== '';
-        }).length,
-        players: all_players
+        total: players.length,
+        players: players
     });
 }
